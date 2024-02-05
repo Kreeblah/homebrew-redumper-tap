@@ -1,2 +1,2 @@
-# redumper-tap
+# homebrew-redumper-tap
 Tap for redumper
