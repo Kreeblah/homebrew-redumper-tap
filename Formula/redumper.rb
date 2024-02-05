@@ -23,7 +23,7 @@ class Redumper < Formula
   def install
     ENV["CC"]="#{HOMEBREW_PREFIX}/opt/llvm/bin/clang"
     ENV["CXX"]="#{HOMEBREW_PREFIX}/opt/llvm/bin/clang++"
-    system "cmake", "-B", "BUILD", "-G", "Ninja", "-DCMAKE_BUILD_TYPE=Release", "-DREDUMPER_VERSION_BUILD=#{version}", "-DREDUMPER_CLANG_LINK_OPTIONS=-L#{HOMEBREW_PREFIX}/opt/llvm/lib/c++", "-DCMAKE_INSTALL_PREFIX=#{prefix}"
+    system "cmake", "-B", "BUILD", "-G", "Ninja", "-DCMAKE_BUILD_TYPE=Release", "-DREDUMPER_VERSION_BUILD=#{version}", "-DREDUMPER_CLANG_LINK_OPTIONS=-L#{HOMEBREW_PREFIX}/opt/llvm/lib/c++", *std_cmake_args
     system "cmake", "--build", "BUILD", "--config", "Release"
     bin.install "#{buildpath}/BUILD/redumper"
   end
@@ -31,5 +31,9 @@ class Redumper < Formula
   test do
     assert_match "build_#{version}",
                  shell_output("#{bin}/redumper --version")
+    assert_not_match "SIGTRAP",
+                 shell_output("#{bin}/redumper")
+    assert_not_match "SIGSEGV",
+                 shell_output("#{bin}/redumper dump")
   end
 end
